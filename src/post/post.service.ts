@@ -4,19 +4,16 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(Post) private readonly postRepo: Repository<Post>,
-    private readonly fileService: FilesService,
   ) {}
   async create(createPostDto: CreatePostDto, image: any): Promise<Post> {
-    const fileName = await this.fileService.createFile(image);
     return this.postRepo.save({
       ...createPostDto,
-      image: fileName,
+      image,
     });
   }
 
