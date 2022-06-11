@@ -4,11 +4,13 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FilesService } from '../files/files.service';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(Post) private readonly postRepo: Repository<Post>,
+    private readonly fileService: FilesService,
   ) {}
   async create(createPostDto: CreatePostDto, image: any): Promise<Post> {
     return this.postRepo.save({
@@ -31,6 +33,8 @@ export class PostService {
   }
 
   async remove(id: number): Promise<number> {
+    const post = await this.postRepo.findOneBy({ id });
+    await this.fileService.deleteFile(post.image);
     await this.postRepo.remove(await this.postRepo.findOneBy({ id }));
     return id;
   }

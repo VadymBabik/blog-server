@@ -21,4 +21,15 @@ export class FilesService {
       );
     }
   }
+  async deleteFile(fileName: string): Promise<void> {
+    try {
+      const filePath = path.resolve(__dirname, '..', 'static') + '/' + fileName;
+      fs.rmSync(filePath, { recursive: true, force: true });
+    } catch (e) {
+      throw new HttpException(
+        'An error occurred while writing the file',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }
